@@ -18,9 +18,11 @@
 //#define LEVEL_IDC       21
 
 
-InputParameters cfgparams;
+extern InputParameters cfgparams;
 
 #ifdef INCLUDED_BY_CONFIGFILE_C
+InputParameters cfgparams;
+
 // Mapping_Map Syntax:
 // {NAMEinConfigFile,  &cfgparams.VariableName, Type, InitialValue, LimitType, MinLimit, MaxLimit, CharSize}
 // Types : {0:int, 1:text, 2: double}
