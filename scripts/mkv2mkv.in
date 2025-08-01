@@ -38,6 +38,36 @@ LDECOD=$INSTALL_DIR/bin/ldecod
 YUVSBSPIPE=$INSTALL_DIR/bin/yuvsbspipe
 NALUPARSER=$INSTALL_DIR/bin/naluparser
 
+# Check that all required binaries and files exist
+echo "Checking required dependencies..."
+
+# Check system binaries
+for cmd in ffmpeg ffprobe mktemp; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "Error: Required system binary '$cmd' not found in PATH"
+        echo "Please install $cmd and try again"
+        exit 1
+    fi
+done
+
+# Check custom binaries
+for binary in "$LDECOD" "$YUVSBSPIPE" "$NALUPARSER"; do
+    if [ ! -x "$binary" ]; then
+        echo "Error: Required binary '$binary' not found or not executable"
+        echo "Please build and install the h264-tools project first"
+        exit 1
+    fi
+done
+
+# Check configuration file
+if [ ! -f "$LDECOD_CFG" ]; then
+    echo "Error: Configuration file '$LDECOD_CFG' not found"
+    echo "Please build and install the h264-tools project first"
+    exit 1
+fi
+
+echo "All dependencies found."
+
 # Temp dir
 TEMPDIR=`mktemp -d`
 OFMT=`echo "$OUTPUT"|cut -d'.' -f2`
