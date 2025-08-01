@@ -1,9 +1,28 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # grab command line parameters
 INPUT=$1
 OUTPUT=$2
 EXECCMD=$3
+
+# Validate required parameters
+if [ -z "$INPUT" ] || [ -z "$OUTPUT" ]; then
+    echo "Usage: $0 <input_file> <output_file> [exec_command]"
+    echo ""
+    echo "  input_file    : Input video file to process"
+    echo "  output_file   : Output video file"
+    echo "  exec_command  : Optional command prefix (e.g., for debugging)"
+    echo ""
+    echo "Example: $0 input.mkv output.mkv"
+    exit 1
+fi
+
+# Check if input file exists
+if [ ! -f "$INPUT" ]; then
+    echo "Error: Input file '$INPUT' does not exist"
+    exit 1
+fi
+
 echo "$EXECCMD"
 
 # some constants
@@ -53,6 +72,15 @@ fi
 # filter input information
 RES_X=`echo $RES|cut -d'x' -f1`
 RES_Y=`echo $RES|cut -d'x' -f2`
+
+# Validate resolution values before arithmetic operations
+if [ -z "$RES_X" ] || [ -z "$RES_Y" ] || ! [[ "$RES_X" =~ ^[0-9]+$ ]] || ! [[ "$RES_Y" =~ ^[0-9]+$ ]]; then
+    echo "Error: Could not extract valid resolution from input file"
+    echo "Resolution detected: ${RES_X}x${RES_Y}"
+    echo "Please check if the input file contains a valid video stream"
+    exit 1
+fi
+
 let DRES_X=2*$RES_X
 let DRES_Y=2*$RES_Y
 [ "$FRAMERATE" = "23.98" ] && FRAMERATE="24000/1001"
